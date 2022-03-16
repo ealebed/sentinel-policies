@@ -1,0 +1,30 @@
+# This sentinel policy ensure that kms crypto key rotation period is 90 days
+
+import "tfplan/v2" as tfplan
+import "strings"
+
+allKmsCryptoKeys = filter tfplan.resource_changes as _, resource_changes {
+	resource_changes.type is "google_kms_crypto_key" and
+		resource_changes.mode is "managed" and
+		(resource_changes.change.actions contains "create" or
+			resource_changes.change.actions is ["update"])
+}
+
+print("CIS ?.?: Ensure that kms crypto key rotation period is 90 days")
+
+deny_undefined_kms_crypto_key_rotation = rule {
+	all allKmsCryptoKeys as _, kmsKeys {
+		kmsKeys.change.after.rotation_period is not null
+	}
+}
+
+kms_crypto_key_rotation_is_90_days = rule when deny_undefined_kms_crypto_key_rotation is true {
+	all allKmsCryptoKeys as _, kmsKeys {
+		strings.to_lower(kmsKeys.change.after.rotation_period) is "7776000s"
+	}
+}
+
+main = rule {
+	deny_undefined_kms_crypto_key_rotation and 
+    kms_crypto_key_rotation_is_90_days
+}

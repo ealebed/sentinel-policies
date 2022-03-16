@@ -1,0 +1,29 @@
+# More info: https://cloud.google.com/storage/docs/uniform-bucket-level-access
+import "tfplan/v2" as tfplan
+
+# Get all Buckets
+allStorageBuckets = filter tfplan.resource_changes as _, resource_changes {
+	resource_changes.type is "google_storage_bucket" and
+		resource_changes.mode is "managed" and
+		(resource_changes.change.actions contains "create" or
+			resource_changes.change.actions is ["update"])
+}
+
+print("CIS ?.?: Ensure that Uniform bucket level access is used")
+
+deny_undefined_uniform_bucket_level_access = rule {
+	all allStorageBuckets as _, bucket {
+        keys(bucket.change.after) contains "uniform_bucket_level_access"
+	}
+}
+
+uniform_bucket_level_access_is_used = rule when deny_undefined_uniform_bucket_level_access is true {
+	all allStorageBuckets as _, bucket {
+		bucket.change.after.uniform_bucket_level_access is true
+	}
+}
+
+main = rule {
+	deny_undefined_uniform_bucket_level_access and
+    uniform_bucket_level_access_is_used
+}

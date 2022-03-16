@@ -1,0 +1,60 @@
+# This sentinel policies enforce encryption at rest utilizing customer managed kms keys
+
+import "tfplan/v2" as tfplan
+
+allBigQueryDatasets = filter tfplan.resource_changes as _, resource_changes {
+	resource_changes.type is "google_bigquery_dataset" and
+		resource_changes.mode is "managed" and
+		(resource_changes.change.actions contains "create" or
+			resource_changes.change.actions is ["update"])
+}
+
+allBigQueryTables = filter tfplan.resource_changes as _, resource_changes {
+	resource_changes.type is "google_bigquery_table" and
+		resource_changes.mode is "managed" and
+		(resource_changes.change.actions contains "create" or
+			resource_changes.change.actions is ["update"])
+}
+
+print("CIS ?.?: Ensure that Customer-managed encryption key (CMEK) used")
+
+deny_undefined_dataset_encryption = rule {
+	all allBigQueryDatasets as _, dataset {
+		keys(dataset.change.after) contains "default_encryption_configuration" and
+			(dataset.change.after.default_encryption_configuration is not [])
+	}
+}
+
+deny_undefined_table_encryption = rule {
+	all allBigQueryTables as _, table {
+		keys(table.change.after) contains "encryption_configuration" and
+			(table.change.after.encryption_configuration is not [])
+	}
+}
+
+customer_managed_encryption_key_on_dataset_is_used = rule when deny_undefined_dataset_encryption is true {
+	all allBigQueryDatasets as _, dataset {
+		length(dataset.change.after.default_encryption_configuration) > 0 and
+            all dataset.change.after.default_encryption_configuration as _, encryption {
+			    encryption.kms_key_name is not null and
+                    (encryption.kms_key_name is not "")
+		    }
+	}
+}
+
+customer_managed_encryption_key_on_table_is_used = rule when deny_undefined_table_encryption is true {
+	all allBigQueryTables as _, table {
+		length(table.change.after.encryption_configuration) > 0 and
+            all table.change.after.encryption_configuration as _, encryption {
+			    encryption.kms_key_name is not null and
+                    (encryption.kms_key_name is not "")
+		    }	
+	}
+}
+
+main = rule {
+	deny_undefined_dataset_encryption and
+	customer_managed_encryption_key_on_dataset_is_used and
+    deny_undefined_table_encryption and
+	customer_managed_encryption_key_on_table_is_used
+}

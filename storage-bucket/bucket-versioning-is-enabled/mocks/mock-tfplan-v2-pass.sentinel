@@ -1,0 +1,41 @@
+resource_changes = {
+	"google_storage_bucket.store": {
+		"address": "google_storage_bucket.store",
+		"change": {
+			"actions": [
+				"create",
+			],
+			"after": {
+				"cors": [],
+				"default_event_based_hold": null,
+				"encryption": [],
+				"force_destroy":  false,
+				"labels":         null,
+				"lifecycle_rule": [],
+				"location":       "US",
+				"logging": [],
+				"name":             "example-store",
+				"requester_pays":   null,
+				"retention_policy": [],
+				"storage_class":    "STANDARD",
+				"timeouts":         null,
+				"uniform_bucket_level_access": true,
+				"versioning": [
+					{
+						"enabled": true,
+					},
+				],
+				"website": [],
+			},
+			"after_unknown": {},
+			"before": null,
+		},
+		"deposed":        "",
+		"index":          null,
+		"mode":           "managed",
+		"module_address": "",
+		"name":           "store",
+		"provider_name":  "registry.terraform.io/hashicorp/google",
+		"type":           "google_storage_bucket",
+	},
+}

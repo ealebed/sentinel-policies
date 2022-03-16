@@ -1,0 +1,83 @@
+resources = {
+	"google_notebooks_instance.nb_instance": {
+		"address": "google_notebooks_instance.nb_instance",
+		"config": {
+			"container_image": [
+				{
+					"repository": {
+						"references": [
+							"var.repository",
+						],
+					},
+					"tag": {
+						"references": [
+							"var.tag",
+						],
+					},
+				},
+			],
+			"disk_encryption": {
+				"constant_value": "CMEK",
+			},
+			"kms_key": {
+				"references": [
+					"google_kms_crypto_key.instance_key.id",
+					"google_kms_crypto_key.instance_key",
+				],
+			},
+			"labels": {
+				"constant_value": {
+					"instance": "ai_notebook",
+				},
+			},
+			"location": {
+				"references": [
+					"var.region",
+				],
+			},
+			"machine_type": {
+				"references": [
+					"var.machine_type",
+				],
+			},
+			"name": {
+				"constant_value": "test-ainb",
+			},
+			"no_proxy_access": {
+				"constant_value": false,
+			},
+			"no_public_ip": {
+				"constant_value": false,
+			},
+			"post_startup_script": {
+				"references": [
+					"var.notebook_bucket_url",
+					"var.notebook_bucket_object",
+				],
+			},
+			"project": {
+				"references": [
+					"var.project_id",
+				],
+			},
+			"service_account": {
+				"references": [
+					"google_service_account.notebook_service_account.email",
+					"google_service_account.notebook_service_account",
+				],
+			},
+		},
+		"count": {},
+		"depends_on": [
+			"google_project_service.notebook_services",
+			"google_kms_crypto_key.instance_key",
+		],
+		"for_each":            {},
+		"mode":                "managed",
+		"module_address":      "",
+		"name":                "nb_instance",
+		"provider_config_key": "google",
+		"provisioners":        [],
+		"type":                "google_notebooks_instance",
+	},
+}

@@ -1,0 +1,143 @@
+resource_changes = {
+	"google_bigquery_dataset_iam_binding.binding": {
+		"address": "google_bigquery_dataset_iam_binding.binding",
+		"change": {
+			"actions": [
+				"create",
+			],
+			"after": {
+				"condition":  [],
+				"dataset_id": "example_dataset",
+				"members": [
+					"projectOwners",
+				],
+				"role": "roles/bigquery.dataOwner",
+			},
+			"after_unknown": {},
+			"before": null,
+		},
+		"deposed":        "",
+		"index":          null,
+		"mode":           "managed",
+		"module_address": "",
+		"name":           "binding",
+		"provider_name":  "registry.terraform.io/hashicorp/google",
+		"type":           "google_bigquery_dataset_iam_binding",
+	},
+	"google_bigquery_dataset_iam_member.member": {
+		"address": "google_bigquery_dataset_iam_member.member",
+		"change": {
+			"actions": [
+				"create",
+			],
+			"after": {
+				"condition":  [],
+				"dataset_id": "example_dataset",
+				"member":     "projectOwners",
+				"role":       "roles/bigquery.dataOwner",
+			},
+			"after_unknown": {},
+			"before": null,
+		},
+		"deposed":        "",
+		"index":          null,
+		"mode":           "managed",
+		"module_address": "",
+		"name":           "member",
+		"provider_name":  "registry.terraform.io/hashicorp/google",
+		"type":           "google_bigquery_dataset_iam_member",
+	},
+	"google_bigquery_dataset_iam_policy.dataset": {
+		"address": "google_bigquery_dataset_iam_policy.dataset",
+		"change": {
+			"actions": [
+				"create",
+			],
+			"after": {
+				"dataset_id":  "example_dataset",
+				"policy_data": "{\"bindings\":[{\"members\":[\"serviceAccount:998476993360@cloudservices.gserviceaccount.com\"],\"role\":\"roles/editor\"}]}",
+			},
+			"after_unknown": {},
+			"before": null,
+		},
+		"deposed":        "",
+		"index":          null,
+		"mode":           "managed",
+		"module_address": "",
+		"name":           "dataset",
+		"provider_name":  "registry.terraform.io/hashicorp/google",
+		"type":           "google_bigquery_dataset_iam_policy",
+	},
+	"google_bigquery_table_iam_binding.binding": {
+		"address": "google_bigquery_table_iam_binding.binding",
+		"change": {
+			"actions": [
+				"create",
+			],
+			"after": {
+				"condition":  [],
+				"dataset_id": "example_dataset",
+				"members": [
+					"projectOwners",
+				],
+				"role":     "roles/bigquery.dataOwner",
+				"table_id": "bar",
+			},
+			"after_unknown": {},
+			"before": null,
+		},
+		"deposed":        "",
+		"index":          null,
+		"mode":           "managed",
+		"module_address": "",
+		"name":           "binding",
+		"provider_name":  "registry.terraform.io/hashicorp/google",
+		"type":           "google_bigquery_table_iam_binding",
+	},
+	"google_bigquery_table_iam_member.member": {
+		"address": "google_bigquery_table_iam_member.member",
+		"change": {
+			"actions": [
+				"create",
+			],
+			"after": {
+				"condition":  [],
+				"dataset_id": "example_dataset",
+				"member":     "projectOwners",
+				"role":       "roles/bigquery.dataOwner",
+				"table_id":   "bar",
+			},
+			"after_unknown": {},
+			"before": null,
+		},
+		"deposed":        "",
+		"index":          null,
+		"mode":           "managed",
+		"module_address": "",
+		"name":           "member",
+		"provider_name":  "registry.terraform.io/hashicorp/google",
+		"type":           "google_bigquery_table_iam_member",
+	},
+	"google_bigquery_table_iam_policy.dataset": {
+		"address": "google_bigquery_table_iam_policy.dataset",
+		"change": {
+			"actions": [
+				"create",
+			],
+			"after": {
+				"dataset_id":  "example_dataset",
+				"policy_data": "{\"bindings\":[{\"members\":[\"projectOwners\"],\"role\":\"roles/editor\"}]}",
+				"table_id":    "bar",
+			},
+			"after_unknown": {},
+			"before": null,
+		},
+		"deposed":        "",
+		"index":          null,
+		"mode":           "managed",
+		"module_address": "",
+		"name":           "dataset",
+		"provider_name":  "registry.terraform.io/hashicorp/google",
+		"type":           "google_bigquery_table_iam_policy",
+	},
+}

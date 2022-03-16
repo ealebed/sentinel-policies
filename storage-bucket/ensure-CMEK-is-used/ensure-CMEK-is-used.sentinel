@@ -1,0 +1,33 @@
+import "tfplan/v2" as tfplan
+
+# Get all Buckets
+allStorageBuckets = filter tfplan.resource_changes as _, resource_changes {
+	resource_changes.type is "google_storage_bucket" and
+		resource_changes.mode is "managed" and
+		(resource_changes.change.actions contains "create" or
+			resource_changes.change.actions is ["update"])
+}
+
+print("CIS ?.?: Ensure that Customer-managed encryption key (CMEK) is used")
+
+deny_undefined_encryption = rule {
+	all allStorageBuckets as _, bucket {
+        keys(bucket.change.after) contains "encryption" and
+			(bucket.change.after.encryption is not [])
+	}
+}
+
+customer_managed_encryption_key_is_used = rule when deny_undefined_encryption is true {
+	all allStorageBuckets as _, bucket {
+		length(bucket.change.after.encryption) > 0 and
+            all bucket.change.after.encryption as _, encryption {
+			    encryption.default_kms_key_name is not null and
+                    (encryption.default_kms_key_name is not "")
+		    }
+	}
+}
+
+main = rule {
+	deny_undefined_encryption and
+    customer_managed_encryption_key_is_used
+}

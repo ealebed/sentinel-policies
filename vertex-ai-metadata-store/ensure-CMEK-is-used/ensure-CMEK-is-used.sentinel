@@ -1,0 +1,33 @@
+import "tfplan/v2" as tfplan
+
+# Get all Vertex AI Metadata Stores
+allAIMetadataStores = filter tfplan.resource_changes as _, resource_changes {
+	resource_changes.type is "google_vertex_ai_metadata_store" and
+		resource_changes.mode is "managed" and
+		(resource_changes.change.actions contains "create" or
+			resource_changes.change.actions is ["update"])
+}
+
+print("CIS ?.?: Ensure that Customer-managed encryption key (CMEK) is used")
+
+deny_undefined_encryption = rule {
+	all allAIMetadataStores as _, store {
+        keys(store.change.after) contains "encryption_spec" and
+			(store.change.after.encryption_spec is not [])
+	}
+}
+
+customer_managed_encryption_key_is_used = rule when deny_undefined_encryption is true {
+	all allAIMetadataStores as _, store {
+		length(store.change.after.encryption_spec) > 0 and
+            all store.change.after.encryption_spec as _, encryption {
+			    encryption.kms_key_name is not null and
+                    (encryption.kms_key_name is not "")
+		    }
+	}
+}
+
+main = rule {
+	deny_undefined_encryption and
+    customer_managed_encryption_key_is_used
+}

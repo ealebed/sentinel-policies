@@ -1,0 +1,30 @@
+# This sentinel policies enforce using Custom Service Account with predefined
+# roles for Vertex AI Notebooks
+
+import "tfconfig/v2" as tfconfig
+
+allNotebooksInstances = filter tfconfig.resources as _, resources {
+	resources.type is "google_notebooks_instance" and
+		resources.mode is "managed"
+}
+
+print("CIS ?.?: Ensure that Custom Service Account is used")
+
+deny_undefined_sa = rule {
+	all allNotebooksInstances as _, instance {
+		keys(instance.config) contains "service_account" and
+			(instance.config.service_account is not [])
+	}
+}
+
+custom_sa_is_used = rule when deny_undefined_sa is true {
+	all allNotebooksInstances as _, instance {
+		length(instance.config.service_account) > 0 and
+            keys (instance.config.service_account) contains "references"
+	}
+}
+
+main = rule {
+	deny_undefined_sa and
+    custom_sa_is_used
+}

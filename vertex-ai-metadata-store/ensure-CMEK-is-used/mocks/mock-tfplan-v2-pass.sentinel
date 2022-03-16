@@ -1,0 +1,29 @@
+resource_changes = {
+	"google_vertex_ai_metadata_store.store": {
+		"address": "google_vertex_ai_metadata_store.store",
+		"change": {
+			"actions": [
+				"create",
+			],
+			"after": {
+				"description": "Store to test the terraform module",
+				"encryption_spec": [
+					{
+						"kms_key_name": "my-kms-for-metastore",
+					},
+				],
+				"name":     "test-store",
+				"timeouts": null,
+			},
+			"after_unknown": {},
+			"before": null,
+		},
+		"deposed":        "",
+		"index":          null,
+		"mode":           "managed",
+		"module_address": "",
+		"name":           "store",
+		"provider_name":  "registry.terraform.io/hashicorp/google-beta",
+		"type":           "google_vertex_ai_metadata_store",
+	},
+}

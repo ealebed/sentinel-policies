@@ -1,0 +1,154 @@
+# NOTE: 'google_bigquery_dataset_iam_binding', 'google_bigquery_dataset_iam_member' and
+# 'google_bigquery_dataset_iam_policy' resources cannot be used with
+# 'google_bigquery_dataset_access' resources or the 'access' field on
+# 'google_bigquery_dataset' or they will fight over what the policy should be.
+
+# NOTE: If 'google_bigquery_dataset_access' resource is used alongside a
+# 'google_bigquery_dataset' resource, the dataset resource must have no defined
+# 'access' blocks
+
+# NOTE: 'google_bigquery_dataset_iam_policy' cannot be used in conjunction with 
+# 'google_bigquery_dataset_iam_binding' and 'google_bigquery_dataset_iam_member'
+# or they will fight over what your policy should be
+
+# NOTE: 'google_bigquery_table_iam_policy' cannot be used in conjunction with 
+# 'google_bigquery_table_iam_binding' and 'google_bigquery_table_iam_member' 
+# or they will fight over what your policy should be
+
+
+import "tfplan/v2" as tfplan
+import "json"
+
+allUnsupportedMembers = [
+	"allUsers",
+	"allAuthenticatedUsers",
+	"",
+	null,
+]
+
+allIAMResourceTypes = [
+	"google_bigquery_dataset_iam_binding",
+	"google_bigquery_dataset_iam_member",
+	"google_bigquery_dataset_iam_policy",
+	"google_bigquery_table_iam_binding",
+	"google_bigquery_table_iam_member",
+	"google_bigquery_table_iam_policy",
+]
+
+# By default all checks are disabled
+is_check_access_block = false
+is_check_access_resource = false
+is_check_iam_resources = false
+violations = {}
+
+# Get all changing resources from plan
+allResources = filter tfplan.resource_changes as _, resource_changes {
+	resource_changes.mode is "managed" and
+	(resource_changes.change.actions contains "create" or
+		resource_changes.change.actions is ["update"])
+}
+
+# Get all BigQuery Datasets
+allBigQueryDatasets = filter tfplan.resource_changes as _, resource_changes {
+	resource_changes.type is "google_bigquery_dataset" and
+		resource_changes.mode is "managed" and
+		(resource_changes.change.actions contains "create" or
+			resource_changes.change.actions is ["update"])
+}
+
+# Get all BigQuery Dataset Accesses
+allBigQueryDatasetAccesses = filter tfplan.resource_changes as _, resource_changes {
+	resource_changes.type is "google_bigquery_dataset_access" and
+		resource_changes.mode is "managed" and
+		(resource_changes.change.actions contains "create" or
+			resource_changes.change.actions is ["update"])
+}
+
+# Get all BigQuery IAM Members
+allBigQueryIAMMembers = filter tfplan.resource_changes as _, resource_changes {
+	(resource_changes.type in ["google_bigquery_dataset_iam_member", "google_bigquery_table_iam_member"]) and
+	(resource_changes.change.actions contains "create" or resource_changes.change.actions is ["update"]) and
+	(resource_changes.mode is "managed")	
+}
+
+# Get all BigQuery IAM Bindings
+allBigQueryIAMBindings = filter tfplan.resource_changes as _, resource_changes {
+	(resource_changes.type in ["google_bigquery_dataset_iam_binding", "google_bigquery_table_iam_binding"]) and
+	(resource_changes.change.actions contains "create" or resource_changes.change.actions is ["update"]) and
+	(resource_changes.mode is "managed")
+}
+
+# Get all BigQuery IAM Policies
+allBigQueryIAMPolicies = filter tfplan.resource_changes as _, resource_changes {
+	resource_changes.type in ["google_bigquery_dataset_iam_policy", "google_bigquery_table_iam_policy"] and
+	(resource_changes.change.actions contains "create" or resource_changes.change.actions is ["update"]) and
+	(resource_changes.mode is "managed")
+}
+
+print("CIS ?.?: Ensure that BigQuery Datasets and Tables is not anonymously or publicly accessible")
+
+for allResources as address, resource {
+	if (resource.type is "google_bigquery_dataset") {
+		if (keys(resource.change.after) contains "access" and (resource.change.after.access is not [])) {
+			is_check_access_block = true
+		}
+	}
+
+	if (resource.type is "google_bigquery_dataset_access") {
+		if (is_check_access_block is false) {
+			is_check_access_resource = true
+		}
+	}
+
+	if (resource.type in allIAMResourceTypes) {
+		if ((is_check_access_block is false) and (is_check_access_resource is false)) {
+			is_check_iam_resources = true
+		}
+	}
+}
+
+if is_check_access_block else false {
+	for allBigQueryDatasets as _, dataset {
+		for dataset.change.after.access as _, access {
+			if (access.special_group in allUnsupportedMembers) {
+				violations["access_block"] = "'Access' block in dataset resource contains unsupported value"
+			}
+		}
+	}
+}
+
+if is_check_access_resource else false {
+	for allBigQueryDatasetAccesses as _, access {
+		if (access.change.after.special_group in allUnsupportedMembers) {
+			violations["access_resource"] = "'Access' resource contains unsupported value"
+		}
+	}
+}
+
+if is_check_iam_resources else false {
+	for allBigQueryIAMMembers as _, member {
+		if (member.change.after.member in allUnsupportedMembers) {
+			violations["iam_member"] = "IAM member resource contains unsupported value"
+		}
+	}
+	for allBigQueryIAMBindings as _, binding {
+		for binding.change.after.members as _, member {
+			if (member in allUnsupportedMembers) {
+				violations["iam_binding"] = "IAM binding resource contains unsupported value"
+			}
+		}
+	}
+	for allBigQueryIAMPolicies as _, policy {
+		for json.unmarshal(policy.change.after.policy_data).bindings as _, binding {
+			for binding.members as _, member {
+				if (member in allUnsupportedMembers) {
+					violations["iam_policy"] = "IAM policy resource contains unsupported value"
+				}
+			}
+		}
+	}
+}
+
+main = rule {
+	length(violations) is 0
+}

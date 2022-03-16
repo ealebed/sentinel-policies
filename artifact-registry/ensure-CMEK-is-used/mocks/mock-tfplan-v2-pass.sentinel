@@ -1,0 +1,54 @@
+resource_changes = {
+	"google_artifact_registry_repository.docker-images": {
+		"address": "google_artifact_registry_repository.docker-images",
+		"change": {
+			"actions": [
+				"create",
+			],
+			"after": {
+				"description":   "example docker images repository with iam",
+				"format":        "DOCKER",
+				"kms_key_name":  "kms-key",
+				"labels":        null,
+				"location":      "us-central1",
+				"repository_id": "docker",
+				"timeouts":      null,
+			},
+			"after_unknown": {},
+			"before": null,
+		},
+		"deposed":        "",
+		"index":          null,
+		"mode":           "managed",
+		"module_address": "",
+		"name":           "docker-images",
+		"provider_name":  "registry.terraform.io/hashicorp/google-beta",
+		"type":           "google_artifact_registry_repository",
+	},
+	"google_artifact_registry_repository.python-libs": {
+		"address": "google_artifact_registry_repository.python-libs",
+		"change": {
+			"actions": [
+				"create",
+			],
+			"after": {
+				"description":   "example repository for python libs with iam",
+				"format":        "PYTHON",
+				"kms_key_name":  "kms-key",
+				"labels":        null,
+				"location":      "us-central1",
+				"repository_id": "python",
+				"timeouts":      null,
+			},
+			"after_unknown": {},
+			"before": null,
+		},
+		"deposed":        "",
+		"index":          null,
+		"mode":           "managed",
+		"module_address": "",
+		"name":           "python-libs",
+		"provider_name":  "registry.terraform.io/hashicorp/google-beta",
+		"type":           "google_artifact_registry_repository",
+	},
+}

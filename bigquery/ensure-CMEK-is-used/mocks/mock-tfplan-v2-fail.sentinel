@@ -1,0 +1,91 @@
+resource_changes = {
+	"google_bigquery_dataset.main": {
+		"address": "google_bigquery_dataset.main",
+		"change": {
+			"actions": [
+				"create",
+			],
+			"after": {
+				"access": [
+					{
+						"domain":         "",
+						"group_by_email": "",
+						"role":           "",
+						"special_group":  "projectOwners",
+						"user_by_email":  "",
+						"view":           [],
+					},
+				],
+				"dataset_id": "example_dataset",
+				"default_partition_expiration_ms": null,
+				"default_table_expiration_ms":     null,
+				"delete_contents_on_destroy":      false,
+				"description":                     null,
+				"friendly_name":                   null,
+				"labels":                          null,
+				"location":                        "US",
+				"project":                         "example-prj",
+				"timeouts":                        null,
+			},
+			"after_unknown": {},
+			"before": null,
+		},
+		"deposed":        "",
+		"index":          null,
+		"mode":           "managed",
+		"module_address": "",
+		"name":           "main",
+		"provider_name":  "registry.terraform.io/hashicorp/google",
+		"type":           "google_bigquery_dataset",
+	},
+	"google_bigquery_table.main": {
+		"address": "google_bigquery_table.main",
+		"change": {
+			"actions": [
+				"create",
+			],
+			"after": {
+				"clustering":          null,
+				"dataset_id":          "example_dataset",
+				"deletion_protection": true,
+				"description":         null,
+				"external_data_configuration": [
+					{
+						"autodetect":  true,
+						"compression": "NONE",
+						"csv_options": [],
+						"google_sheets_options": [
+							{
+								"range":             null,
+								"skip_leading_rows": 1,
+							},
+						],
+						"hive_partitioning_options": [],
+						"ignore_unknown_values":     null,
+						"max_bad_records":           null,
+						"source_format":             "GOOGLE_SHEETS",
+						"source_uris": [
+							"https://docs.google.com/spreadsheets/d/123456789012345",
+						],
+					},
+				],
+				"friendly_name":      null,
+				"labels":             null,
+				"materialized_view":  [],
+				"range_partitioning": [],
+				"table_id":           "bar",
+				"time_partitioning":  [],
+				"view":               [],
+			},
+			"after_unknown": {},
+			"before": null,
+		},
+		"deposed":        "",
+		"index":          null,
+		"mode":           "managed",
+		"module_address": "",
+		"name":           "main",
+		"provider_name":  "registry.terraform.io/hashicorp/google",
+		"type":           "google_bigquery_table",
+	},
+}

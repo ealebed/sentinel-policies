@@ -1,0 +1,30 @@
+# This sentinel policies enforce encryption at rest utilizing customer managed kms keys
+
+import "tfplan/v2" as tfplan
+import "strings"
+
+allNotebooksInstances = filter tfplan.resource_changes as _, resource_changes {
+	resource_changes.type is "google_notebooks_instance" and
+		resource_changes.mode is "managed" and
+		(resource_changes.change.actions contains "create" or
+			resource_changes.change.actions is ["update"])
+}
+
+print("CIS ?.?: Ensure that Customer-managed encryption key (CMEK) used")
+
+deny_undefined_disk_encryption = rule {
+	all allNotebooksInstances as _, instance {
+		instance.change.after.disk_encryption is not null
+	}
+}
+
+customer_managed_encryption_key_is_used = rule when deny_undefined_disk_encryption is true {
+	all allNotebooksInstances as _, instance {
+		strings.to_upper(instance.change.after.disk_encryption) is "CMEK"
+	}
+}
+
+main = rule {
+	deny_undefined_disk_encryption and
+    customer_managed_encryption_key_is_used
+}

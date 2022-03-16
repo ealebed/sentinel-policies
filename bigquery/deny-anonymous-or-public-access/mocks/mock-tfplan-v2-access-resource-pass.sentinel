@@ -1,0 +1,64 @@
+resource_changes = {
+	"google_bigquery_dataset.main": {
+		"address": "google_bigquery_dataset.main",
+		"change": {
+			"actions": [
+				"create",
+			],
+			"after": {
+				"dataset_id": "example_dataset",
+				"default_encryption_configuration": [
+					{
+						"kms_key_name": "google_kms_crypto_key.crypto_key.id",
+					},
+				],
+				"default_partition_expiration_ms": null,
+				"default_table_expiration_ms":     null,
+				"delete_contents_on_destroy":      false,
+				"description":                     null,
+				"friendly_name":                   null,
+				"labels":                          null,
+				"location":                        "US",
+				"project":                         "example-prj",
+				"timeouts":                        null,
+			},
+			"after_unknown": {},
+			"before": null,
+		},
+		"deposed":        "",
+		"index":          null,
+		"mode":           "managed",
+		"module_address": "",
+		"name":           "main",
+		"provider_name":  "registry.terraform.io/hashicorp/google",
+		"type":           "google_bigquery_dataset",
+	},
+	"google_bigquery_dataset_access.access": {
+		"address": "google_bigquery_dataset_access.access",
+		"change": {
+			"actions": [
+				"create",
+			],
+			"after": {
+				"dataset_id":     "example_dataset",
+				"domain":         null,
+				"group_by_email": null,
+				"iam_member":     null,
+				"role":           null,
+				"special_group":  "projectOwners",
+				"timeouts":       null,
+				"user_by_email":  null,
+				"view":           [],
+			},
+			"after_unknown": {},
+			"before": null,
+		},
+		"deposed":        "",
+		"index":          null,
+		"mode":           "managed",
+		"module_address": "",
+		"name":           "access",
+		"provider_name":  "registry.terraform.io/hashicorp/google",
+		"type":           "google_bigquery_dataset_access",
+	},
+}

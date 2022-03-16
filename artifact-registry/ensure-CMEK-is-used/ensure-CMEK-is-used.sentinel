@@ -1,0 +1,30 @@
+# This sentinel policies enforce encryption at rest utilizing customer managed kms keys
+
+import "tfplan/v2" as tfplan
+
+allArtifactRegistryRepositories = filter tfplan.resource_changes as _, resource_changes {
+	resource_changes.type is "google_artifact_registry_repository" and
+		resource_changes.mode is "managed" and
+		(resource_changes.change.actions contains "create" or
+			resource_changes.change.actions is ["update"])
+}
+
+print("CIS ?.?: Ensure that Customer-managed encryption key (CMEK) used")
+
+deny_undefined_disk_encryption = rule {
+	all allArtifactRegistryRepositories as _, repository {
+		keys(repository.change.after) contains "kms_key_name"
+	}
+}
+
+customer_managed_encryption_key_is_used = rule when deny_undefined_disk_encryption is true {
+	all allArtifactRegistryRepositories as _, repository {
+		repository.change.after.kms_key_name is not null and
+            (repository.change.after.kms_key_name is not "")
+	}
+}
+
+main = rule {
+	deny_undefined_disk_encryption and
+    customer_managed_encryption_key_is_used
+}
