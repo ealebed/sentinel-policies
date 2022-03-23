@@ -1,0 +1,24 @@
+# This sentinel policies enforce using Custom Service Account with predefined
+# roles for Vertex AI Notebooks
+
+import "tfplan/v2" as tfplan
+
+allNotebooksInstances = filter tfplan.resource_changes as _, resource_changes {
+	resource_changes.type is "google_notebooks_instance" and
+		resource_changes.mode is "managed" and
+		(resource_changes.change.actions contains "create" or
+			resource_changes.change.actions is ["update"])
+}
+
+print("CIS ?.?: Ensure that Custom Service Account is used")
+
+deny_undefined_sa = rule {
+	all allNotebooksInstances as _, instance {
+		keys(instance.change.after) contains "service_account" and
+			instance.change.after.service_account is not null
+	}
+}
+
+main = rule {
+	deny_undefined_sa
+}

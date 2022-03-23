@@ -1,0 +1,23 @@
+import "tfplan/v2" as tfplan
+
+# Get all Projects
+allProjects = filter tfplan.resource_changes as _, resource_changes {
+	resource_changes.type is "google_project" and
+		resource_changes.mode is "managed" and
+		(resource_changes.change.actions contains "create" or
+			resource_changes.change.actions is ["update"])
+}
+
+print("CIS ?.?: Ensure that labels is used on project(s)")
+
+deny_undefined_labels_project = rule {
+	all allProjects as _, project {
+        keys(project.change.after) contains "labels" and
+			(project.change.after.labels is not null) and
+				(project.change.after.labels is not {})
+	}
+}
+
+main = rule {
+	deny_undefined_labels_project
+}

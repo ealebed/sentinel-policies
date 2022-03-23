@@ -1,0 +1,53 @@
+resource_changes = {
+	"google_notebooks_instance.nb_instance": {
+		"address": "google_notebooks_instance.nb_instance",
+		"change": {
+			"actions": [
+				"create",
+			],
+			"after": {
+				"accelerator_config": [],
+				"boot_disk_size_gb":  null,
+				"boot_disk_type":     null,
+				"container_image": [
+					{
+						"repository": "gcr.io/deeplearning-platform-release/base-cpu",
+						"tag":        "latest",
+					},
+				],
+				"custom_gpu_driver_path": null,
+				"data_disk_size_gb":      null,
+				"data_disk_type":         null,
+				"disk_encryption":        "CMEK",
+				"install_gpu_driver":     null,
+				"instance_owners":        null,
+				"kms_key":                null,
+				"labels": {
+					"instance": "Vertex_ai_notebook",
+				},
+				"location":               "europe-central2",
+				"machine_type":           "n1-standard-4",
+				"metadata":               null,
+				"name":                   "test-ainb",
+				"no_proxy_access":        false,
+				"no_public_ip":           false,
+				"no_remove_data_disk":    null,
+				"post_startup_script":    null,
+				"project":                "example-prj",
+				"service_account_scopes": null,
+				"tags":     null,
+				"timeouts": null,
+				"vm_image": [],
+			},
+			"after_unknown": {},
+			"before": null,
+		},
+		"deposed":        "",
+		"index":          null,
+		"mode":           "managed",
+		"module_address": "",
+		"name":           "nb_instance",
+		"provider_name":  "registry.terraform.io/hashicorp/google",
+		"type":           "google_notebooks_instance",
+	},
+}

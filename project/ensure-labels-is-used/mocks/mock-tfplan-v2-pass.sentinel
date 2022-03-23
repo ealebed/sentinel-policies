@@ -1,0 +1,32 @@
+resource_changes = {
+	"google_project.my_project": {
+		"address": "google_project.my_project",
+		"change": {
+			"actions": [
+				"create",
+			],
+			"after": {
+				"auto_create_network": true,
+				"billing_account":     null,
+				"folder_id":           null,
+				"labels": {
+					"key":  "value",
+					"key1": "value1",
+				},
+				"name":       "Project for Mocks",
+				"org_id":     "123456789011",
+				"project_id": "just-for-mocks-project-id",
+				"timeouts":   null,
+			},
+			"after_unknown": {},
+			"before": null,
+		},
+		"deposed":        "",
+		"index":          null,
+		"mode":           "managed",
+		"module_address": "",
+		"name":           "my_project",
+		"provider_name":  "registry.terraform.io/hashicorp/google",
+		"type":           "google_project",
+	},
+}
