@@ -1,0 +1,30 @@
+resource_changes = {
+	"google_vertex_ai_dataset.dataset": {
+		"address": "google_vertex_ai_dataset.dataset",
+		"change": {
+			"actions": [
+				"create",
+			],
+			"after": {
+				"display_name": "vertex-dataset",
+				"encryption_spec": [
+					{
+						"kms_key_name": "my-kms-for-metastore",
+					},
+				],
+				"metadata_schema_uri": "gs://google-cloud-aiplatform/schema/dataset/metadata/tabular_1.0.0.yaml",
+				"region":              "us-central1",
+				"timeouts":            null,
+			},
+			"after_unknown": {},
+			"before": null,
+		},
+		"deposed":        "",
+		"index":          null,
+		"mode":           "managed",
+		"module_address": "",
+		"name":           "dataset",
+		"provider_name":  "registry.terraform.io/hashicorp/google",
+		"type":           "google_vertex_ai_dataset",
+	},
+}
